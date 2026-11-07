@@ -3,74 +3,165 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cow Clicker - Fears to Fathom</title>
-    <link rel="preconnect" href="https://googleapis.com">
-    <link rel="preconnect" href="https://gstatic.com" crossorigin>
-    <link href="https://googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+    <meta name="theme-color" content="#07111d">
+    <title>Cowcore</title>
+    <link rel="icon" type="image/png" href="headCow/CowHead.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css?v=7">
 </head>
 <body>
-
     <div id="game-screen" class="cow-game" style="background-image: url('fon/1.png');">
+        <div class="scene-shade" aria-hidden="true"></div>
 
-        <!-- СЧЕТ -->
         <header class="score-board">
-            <div class="total-cows">
-                <img src="headCow/CowHead.png" alt="mini-cow" class="mini-cow" height="40px">
-                <span id="score-counter">0</span>
+            <div class="brand-block" aria-labe="Cowcore">
+                <img src="headCow/CowHead.png" alt="" class="brand-icon">
+                <div>
+                    <p class="brand-name">COWCORE</p>
+                    <p class="brand-caption">BUILD THE HERD</p>
+                </div>
             </div>
-            <div class="cps-text">
-                <span id="cps-counter">0</span> COWS PER SECOND
+
+            <div class="herd-stat" aria-live="polite">
+                <span class="hud-label">СТАДО</span>
+                <div class="total-cows">
+                    <img src="headCow/CowHead.png" alt="" class="mini-cow">
+                    <span id="score-counter">0</span>
+                </div>
+                <span class="cps-text"><strong id="cps-counter">0</strong> / СЕК</span>
+            </div>
+
+            <div class="top-combo" aria-labe="Текущий множитель">
+                <div class="top-combo-copy">
+                    <span>КОМБО</span>
+                    <strong>2X</strong>
+                </div>
+                <div class="combo-track" aria-hidden="true">
+                    <span class="combo-fill"></span>
+                    <span class="combo-threshold"></span>
+                </div>
+            </div>
+
+            <div class="hud-controls">
+                <button id="fullscreen-btn" class="icon-button" type="button" aria-label="Полноэкранный режим" title="Полноэкранный режим">⛶</button>
+                <button id="settings-open-btn" class="icon-button" type="button" aria-label="Открыть настройки" title="Настройки">⚙</button>
             </div>
         </header>
 
-        <!-- ПОЛЕ -->
         <main class="game-field">
-            <div class="multiplier-bar">
-                <div class="bar-fill" style="height: 0%;"></div>
-                <span class="bar-label">2X</span>
-            </div>
+            <section class="cow-stage" aria-label="Игровое поле">
+                <button class="main-cow-btn" type="button" aria-label="Получить корову">
+                    <img src="Normal/Cow.png" alt="Корова" class="pixel-image">
+                </button>
 
-            <button class="main-cow-btn">
-                <img src="Normal/Cow.png" alt="Cow" class="pixel-image">
-            </button>
+                <div class="multiplier-panel">
+                    <div class="multiplier-copy">
+                        <span>КОМБО</span>
+                        <strong class="bar-label">2X</strong>
+                    </div>
+                    <div class="combo-track combo-track-large" aria-hidden="true">
+                        <span class="bar-fill combo-fill"></span>
+                        <span class="combo-threshold"></span>
+                    </div>
+                </div>
+            </section>
         </main>
 
-        <!-- УЛУЧШЕНИЯ -->
-        <button id="toggle-upgrades-btn" class="menu-toggle-btn">▼</button>
-        <section id="upgrades-container" class="upgrades-list"></section>
+        <section class="upgrades-dock" aria-labelledby="upgrades-title">
+            <div class="upgrades-toolbar">
+                <div>
+                    <span class="hud-label">ПРОИЗВОДСТВО</span>
+                    <h2 id="upgrades-title">УЛУЧШЕНИЯ</h2>
+                </div>
+                <button id="toggle-upgrades-btn" class="dock-toggle" type="button" aria-expanded="true" aria-controls="upgrades-body">
+                    <span class="dock-toggle-label">Скрыть</span>
+                    <span class="dock-toggle-icon" aria-hidden="true">⌄</span>
+                </button>
+            </div>
 
-        <!-- НАСТРОЙКИ КНОПКА -->
-        <button id="settings-open-btn" class="settings-toggle">⚙️</button>
+            <div id="upgrades-body" class="upgrades-body">
+                <nav class="upgrade-categories" aria-label="Категории улучшений">
+                    <button class="category-button active" type="button" data-upgrade-filter="all" aria-label="Все улучшения" title="Все улучшения">
+                        <img src="headCow/CowHead.png" alt="">
+                    </button>
+                    <button class="category-button" type="button" data-upgrade-filter="click" aria-label="Улучшения клика" title="Улучшения клика">
+                        <img src="box/Cowbell.png" alt="">
+                    </button>
+                    <button class="category-button" type="button" data-upgrade-filter="cps" aria-label="Производство" title="Производство">
+                        <img src="box/Gold.png" alt="">
+                    </button>
+                    <button class="category-button" type="button" data-upgrade-filter="advanced" aria-label="Продвинутые улучшения" title="Продвинутые улучшения">
+                        <img src="box/Crown.png" alt="">
+                    </button>
+                </nav>
+                <div id="upgrades-container" class="upgrades-list"></div>
+            </div>
+        </section>
 
-        <!-- НАСТРОЙКИ ОКНО -->
-        <div id="settings-modal" class="modal-overlay">
+        <div id="settings-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="settings-title" aria-hidden="true">
             <div class="modal-window">
-                <button id="settings-close-btn" class="modal-close">X</button>
-                <h2>НАСТРОЙКИ</h2>
-                
+                <div class="modal-header">
+                    <div>
+                        <span class="hud-label">COWCORE</span>
+                        <h2 id="settings-title">НАСТРОЙКИ</h2>
+                    </div>
+                    <button id="settings-close-btn" class="icon-button modal-close" type="button" aria-label="Закрыть настройки" title="Закрыть">×</button>
+                </div>
+
                 <div class="setting-row">
-                    <span class="setting-title">ФОН:</span>
+                    <div class="setting-copy">
+                        <span class="setting-title">МИР</span>
+                        <span>Выбери фон игровой сцены</span>
+                    </div>
                     <div class="switcher">
-                        <button id="bg-prev" class="switch-btn">&lt;</button>
+                        <button id="bg-prev" class="switch-btn" type="button" aria-label="Предыдущий фон">‹</button>
                         <span id="bg-name" class="switch-value">Фон 1</span>
-                        <button id="bg-next" class="switch-btn">&gt;</button>                 
+                        <button id="bg-next" class="switch-btn" type="button" aria-label="Следующий фон">›</button>
                     </div>
                 </div>
 
                 <div class="setting-row">
-                    <span class="setting-title">КОРОВА:</span>
-                    <div class="switcher">
-                        <button id="cow-prev" class="switch-btn">&lt;</button>
-                        <span id="cow-name" class="switch-value">Обычная</span>
-                        <button id="cow-next" class="switch-btn">&gt;</button>
+                    <div class="setting-copy">
+                        <span class="setting-title">КОРОВА</span>
+                        <span>Смени внешний вид стада</span>
                     </div>
+
+                    <div class="switcher">
+                        <button id="cow-prev" class="switch-btn" type="button" aria-label="Предыдущая корова">‹</button>
+                        <span id="cow-name" class="switch-value">Обычная</span>
+                        <button id="cow-next" class="switch-btn" type="button" aria-label="Следующая корова">›</button>
+                    </div>
+                </div>
+
+                <div class="setting-row">
+                    <div class="setting-copy">
+                        <span class="setting-title">МИНИ-ГОЛОВА</span>
+                        <span>Выбери значок для счётчика и улучшений</span>
+                    </div>
+
+                    <div class="switcher">
+                        <button id="mini-cow-prev" class="switch-btn" type="button" aria-label="Предыдущая мини-голова">‹</button>
+                        <span class="switch-value mini-cow-choice">
+                            <img id="mini-cow-preview" class="mini-cow" src="headCow/CowHead.png" alt="">
+                            <span id="mini-cow-name">Обычная</span>
+                        </span>
+                        <button id="mini-cow-next" class="switch-btn" type="button" aria-label="Следующая мини-голова">›</button>
+                    </div>
+                </div>
+
+                <div class="setting-row">
+                    <div class="setting-copy">
+                        <span class="setting-title">СБРОС</span>
+                        <span>Сбросить весь прогресс игры</span>
+                    </div>
+                    <button id="reset-btn" class="switch-btn" type="button" aria-label="Сбросить прогресс">reset</button>
                 </div>
             </div>
         </div>
-
     </div>
 
-    <script src="script.js"></script>
+    <script src="script.js?v=5"></script>
 </body>
 </html>

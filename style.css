@@ -1,332 +1,842 @@
+:root {
+    --ink: #f5f7f8;
+    --muted: #9fb0c1;
+    --panel: rgba(5, 15, 26, 0.96);
+    --panel-soft: rgba(8, 21, 35, 0.93);
+    --line: #3c5e78;
+    --line-soft: rgba(127, 174, 207, 0.3);
+    --cyan: #24e3f1;
+    --amber: #ffc84a;
+    --magenta: #ff4ea3;
+    --shadow: rgba(0, 0, 0, 0.48);
+}
+
 * {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
 }
 
+html,
 body {
-    background-color: #1a1a1a;
-    overflow: hidden; /* нет скроллу страницы */
+    width: 100%;
+    min-height: 100%;
+    background: #06101a;
+}
+
+body {
+    min-height: 100vh;
+    min-height: 100dvh;
+    overflow: hidden;
+    color: var(--ink);
+    font-family: "Press Start 2P", monospace;
     image-rendering: pixelated;
     image-rendering: crisp-edges;
-    font-family: 'Press Start 2P', monospace;
-    text-shadow: 2px 2px 0px #000;
+}
+
+button {
+    color: inherit;
+    font: inherit;
+}
+
+button:focus-visible {
+    outline: 3px solid var(--magenta);
+    outline-offset: 3px;
 }
 
 .cow-game {
+    position: relative;
+    isolation: isolate;
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr) auto;
     width: 100vw;
     height: 100vh;
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    background-size: cover;
+    height: 100dvh;
+    overflow: hidden;
     background-position: center;
     background-repeat: no-repeat;
+    background-size: cover;
 }
 
-/* СЧЕТ СВЕРХУ */
+.scene-shade {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background:
+        linear-gradient(180deg, rgba(2, 8, 14, 0.16), transparent 35%),
+        linear-gradient(0deg, rgba(2, 8, 14, 0.34), transparent 42%);
+}
+
 .score-board {
-    width: 100%;
-    text-align: center;
-    padding: 40px 10px 20px 10px;
-    background: linear-gradient(to bottom, rgba(0,0,0,0.7), rgba(0,0,0,0));
     z-index: 5;
+    display: grid;
+    grid-template-columns: minmax(220px, 1fr) minmax(260px, 1fr) minmax(210px, 0.8fr) auto;
+    align-items: center;
+    gap: 18px;
+    width: calc(100% - 24px);
+    min-height: 82px;
+    margin: 12px auto 0;
+    padding: 10px 14px;
+    background: var(--panel);
+    border: 1px solid #6f98b4;
+    box-shadow: 6px 6px 0 var(--shadow), inset 0 -3px 0 rgba(36, 227, 241, 0.12);
+}
+
+.brand-block {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+    padding-right: 18px;
+    border-right: 1px solid var(--line);
+}
+
+.brand-icon {
+    flex: 0 0 auto;
+    width: 42px;
+    height: 42px;
+    object-fit: contain;
+}
+
+.brand-name {
+    font-size: 16px;
+    line-height: 1.35;
+}
+
+.brand-caption,
+.hud-label {
+    color: var(--amber);
+    font-size: 7px;
+    line-height: 1.5;
+}
+
+.herd-stat {
+    display: grid;
+    grid-template-columns: auto auto;
+    align-items: center;
+    justify-content: center;
+    column-gap: 10px;
+    min-width: 0;
+    text-align: center;
+}
+
+.herd-stat .hud-label {
+    grid-column: 1;
+    grid-row: 1;
 }
 
 .total-cows {
+    grid-column: 2;
+    grid-row: 1 / 3;
     display: flex;
     align-items: center;
-    justify-content: center;
-    gap: 15px;
-    font-size: 28px;
-    color: #fff;
-    margin-bottom: 12px;
+    gap: 10px;
+    color: var(--amber);
+    font-size: 24px;
+    line-height: 1;
 }
 
 .mini-cow {
-    image-rendering: pixelated;
+    width: 24px;
+    height: 24px;
+    object-fit: contain;
 }
 
 .cps-text {
-    font-size: 12px;
-    color: #cbd5e1;
+    grid-column: 1;
+    grid-row: 2;
+    color: var(--muted);
+    font-size: 7px;
+    line-height: 1.6;
 }
 
-/* ИГРОВОЕ ПОЛЕ */
-.game-field {
-    flex: 1;
-    position: relative;
+.cps-text strong {
+    color: var(--cyan);
+}
+
+.top-combo {
+    padding-left: 18px;
+    border-left: 1px solid var(--line);
+}
+
+.top-combo-copy,
+.multiplier-copy {
     display: flex;
-    justify-content: center;
     align-items: center;
-    padding-bottom: 220px; /* место под подвал */
+    justify-content: space-between;
+    margin-bottom: 8px;
+    font-size: 8px;
+}
+
+.top-combo-copy strong,
+.bar-label {
+    color: var(--cyan);
+    font-size: 14px;
+}
+
+.combo-track {
+    position: relative;
+    width: 100%;
+    height: 12px;
+    overflow: hidden;
+    background:
+        repeating-linear-gradient(90deg, transparent 0 22px, rgba(101, 145, 177, 0.55) 22px 25px),
+        #07101a;
+    border: 2px solid #6f98b4;
+    box-shadow: inset 0 0 0 2px #03080d;
+}
+
+.combo-fill {
+    position: absolute;
+    inset: 0 auto 0 0;
+    z-index: 1;
+    display: block;
+    width: 0;
+    background: var(--cyan);
+    transition: width 110ms linear;
+}
+
+.combo-threshold {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    z-index: 2;
+    width: 2px;
+    background: var(--ink);
+}
+
+.hud-controls {
+    display: flex;
+    gap: 8px;
+    padding-left: 18px;
+    border-left: 1px solid var(--line);
+}
+
+.icon-button {
+    display: grid;
+    place-items: center;
+    width: 42px;
+    height: 42px;
+    background: #0a1826;
+    border: 1px solid #6f98b4;
+    box-shadow: 3px 3px 0 #02070c;
+    cursor: pointer;
+    font-family: system-ui, sans-serif;
+    font-size: 22px;
+}
+
+.icon-button:hover,
+.switch-btn:hover,
+.dock-toggle:hover {
+    color: var(--cyan);
+    border-color: var(--cyan);
+}
+
+.icon-button:active,
+.switch-btn:active,
+.dock-toggle:active {
+    transform: translate(2px, 2px);
+    box-shadow: 1px 1px 0 #02070c;
+}
+
+.game-field {
+    position: relative;
+    display: grid;
+    place-items: center;
+    min-height: 0;
+    padding: 8px 24px;
+}
+
+.cow-stage {
+    position: relative;
+    display: grid;
+    grid-template-rows: minmax(0, 1fr) auto;
+    place-items: center;
+    width: min(720px, 100%);
+    height: 100%;
+    min-height: 250px;
 }
 
 .main-cow-btn {
+    display: grid;
+    place-items: center;
+    min-width: 230px;
+    min-height: 230px;
+    padding: 0;
     background: none;
-    border: none;
+    border: 0;
     cursor: pointer;
-    outline: none;
-    transition: transform 0.05s ease;
+    filter: drop-shadow(10px 13px 0 rgba(0, 0, 0, 0.28));
+    transition: transform 80ms ease, filter 80ms ease;
+}
+
+.main-cow-btn:hover {
+    transform: translateY(-3px) scale(1.02);
+    filter: drop-shadow(10px 16px 0 rgba(0, 0, 0, 0.24));
 }
 
 .main-cow-btn:active {
-    transform: scale(0.95);
+    transform: translateY(4px) scale(0.94);
+    filter: drop-shadow(4px 6px 0 rgba(0, 0, 0, 0.32));
 }
 
 .pixel-image {
-    width: 280px;
+    width: min(28vw, 310px);
     height: auto;
     image-rendering: pixelated;
 }
 
-/* ШКАЛА 2X */
-.multiplier-bar {
-    position: absolute;
-    left: 40px;
-    bottom: 260px; /* выше подвала */
-    width: 24px;
-    height: 250px;
-    border: 4px solid #000;
-    background-color: rgba(0, 0, 0, 0.6);
+.multiplier-panel {
+    width: min(270px, 82vw);
+    padding: 8px 10px 10px;
+    background: var(--panel);
+    border: 1px solid #6f98b4;
+    box-shadow: 4px 4px 0 var(--shadow);
+}
+
+.combo-track-large {
+    height: 14px;
+}
+
+.upgrades-dock {
+    z-index: 10;
+    width: calc(100% - 24px);
+    margin: 0 auto 12px;
+    overflow: hidden;
+    background: var(--panel);
+    border: 1px solid #6f98b4;
+    box-shadow: 6px 6px 0 var(--shadow);
+}
+
+.upgrades-toolbar {
     display: flex;
-    flex-direction: column-reverse;
-}
-
-.multiplier-bar::after {
-    content: ""; /* черта на 50% */
-    position: absolute;
-    bottom: 50%; 
-    left: 0;
-    width: 100%;
-    height: 4px;
-    background-color: #000;
-    z-index: 2;
-}
-
-.multiplier-bar::before {
-    content: ">"; /* стрелка */
-    position: absolute;
-    bottom: 48%; 
-    right: -18px; 
-    font-size: 12px;
-    color: #fff;
-    z-index: 3;
-}
-
-.bar-fill {
-    background-color: #2ecc71;
-    width: 100%;
-    transition: height 0.1s ease;
-}
-
-.bar-label {
-    position: absolute;
-    top: -26px;
-    left: 50%;
-    transform: translateX(-50%);
-    font-size: 10px;
-    color: #fff;
-}
-
-/* ПАНЕЛЬ УЛУЧШЕНИЙ */
-#upgrades-container, .upgrades-list {
-    width: 100%;
-    height: 220px;
-    background-color: #000000 !important;
-    padding: 20px 40px;
-    border-top: 4px solid #fff;
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    z-index: 99;
-    display: grid !important;
-    grid-template-columns: repeat(4, 1fr) !important;
-    grid-template-rows: repeat(2, 1fr) !important;
-    gap: 15px;
-    transition: transform 0.3s ease-in-out; /* анимация скрытия */
-}
-
-.upgrades-hidden {
-    transform: translateY(220px); /* прячем за экран */
-}
-
-/* КНОПКА СКРЫТЬ/ПОКАЗАТЬ */
-.menu-toggle-btn {
-    position: absolute;
-    bottom: 220px;
-    left: 50%;
-    transform: translateX(-50%);
-    background-color: #000;
-    border: 3px solid #fff;
-    border-bottom: none;
-    color: #fff;
-    font-family: 'Press Start 2P', monospace;
-    font-size: 14px;
-    padding: 6px 15px;
-    cursor: pointer;
-    z-index: 100;
-    outline: none;
-    transition: bottom 0.3s ease-in-out;
-}
-
-/* КНОПКА УЛУЧШЕНИЯ */
-.upgrade-item {
-    width: 100%;
-    height: 100%;
-    background-color: #1a1a1a;
-    border: 3px solid #fff;
-    padding: 10px 15px;
-    display: flex;
-    justify-content: space-between;
     align-items: center;
-    color: #fff;
-    font-family: 'Press Start 2P', monospace;
-    cursor: pointer;
-    outline: none;
+    justify-content: space-between;
+    min-height: 46px;
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--line);
 }
 
-.upgrade-item:disabled {
-    opacity: 0.25;
-    background-color: #111;
-    border-color: #555;
-    color: #555;
-    cursor: not-allowed;
+.upgrades-toolbar h2 {
+    margin-top: 3px;
+    font-size: 11px;
+}
+
+.dock-toggle {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 10px;
+    color: var(--muted);
+    background: #081521;
+    border: 1px solid var(--line);
+    cursor: pointer;
+}
+
+.dock-toggle-label {
+    font-size: 7px;
+}
+
+.dock-toggle-icon {
+    font-family: system-ui, sans-serif;
+    font-size: 18px;
+    line-height: 0.5;
+    transition: transform 180ms ease;
+}
+
+.upgrades-body {
+    display: grid;
+    grid-template-columns: 56px minmax(0, 1fr);
+    max-height: 178px;
+    opacity: 1;
+    transition: max-height 220ms ease, opacity 160ms ease;
+}
+
+.upgrades-dock.upgrades-hidden .upgrades-body {
+    max-height: 0;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.upgrades-dock.upgrades-hidden .upgrades-toolbar {
+    border-bottom-color: transparent;
+}
+
+.upgrades-dock.upgrades-hidden .dock-toggle-icon {
+    transform: rotate(180deg);
+}
+
+.upgrade-categories {
+    display: grid;
+    grid-template-rows: repeat(4, 1fr);
+    gap: 4px;
+    padding: 8px 6px;
+    border-right: 1px solid var(--line);
+}
+
+.category-button {
+    display: grid;
+    place-items: center;
+    min-height: 34px;
+    background: #091724;
+    border: 1px solid transparent;
+    cursor: pointer;
+}
+
+.category-button img {
+    width: 24px;
+    height: 24px;
+    object-fit: contain;
+}
+
+.category-button:hover {
+    border-color: var(--cyan);
+}
+
+.category-button.active {
+    background: rgba(255, 78, 163, 0.16);
+    border-color: var(--magenta);
+    box-shadow: inset 3px 0 0 var(--magenta);
+}
+
+.upgrades-list {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(280px, 1fr);
+    gap: 10px;
+    min-width: 0;
+    padding: 10px;
+    overflow-x: auto;
+    overflow-y: hidden;
+}
+
+.upgrade-item {
+    display: grid;
+    grid-template-columns: 48px minmax(0, 1fr) auto;
+    grid-template-rows: auto auto;
+    align-items: center;
+    gap: 5px 10px;
+    min-width: 210px;
+    min-height: 112px;
+    padding: 10px;
+    color: var(--ink);
+    text-align: left;
+    background: #091623;
+    border: 1px solid var(--line);
+    cursor: pointer;
+    transition: border-color 90ms ease, background 90ms ease, transform 90ms ease;
+}
+
+.upgrade-item:hover:not(:disabled) {
+    background: #0e2031;
+    border-color: var(--magenta);
 }
 
 .upgrade-item:active:not(:disabled) {
     transform: translateY(2px);
 }
 
+.upgrade-item:disabled {
+    color: #7e8d9a;
+    background: #07111b;
+    border-color: rgba(111, 152, 180, 0.3);
+    cursor: not-allowed;
+}
+
+.upgrade-icon-wrap {
+    grid-column: 1;
+    grid-row: 1 / 3;
+    display: grid;
+    place-items: center;
+    width: 48px;
+    height: 58px;
+    background: #0c1e2e;
+    border: 1px solid var(--line);
+}
+
+.upgrade-icon {
+    width: 34px;
+    height: 34px;
+    object-fit: contain;
+}
+
 .upgrade-info {
-    text-align: left;
+    grid-column: 2;
+    grid-row: 1;
+    min-width: 0;
 }
 
 .upgrade-name {
-    font-size: 10px;
-    margin-bottom: 4px;
+    overflow: hidden;
+    margin-bottom: 7px;
+    font-size: 8px;
+    line-height: 1.45;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.upgrade-level,
+.upgrade-desc {
+    color: var(--muted);
+    font-family: system-ui, sans-serif;
+    font-size: 11px;
+    line-height: 1.35;
+}
+
+.upgrade-level {
+    color: var(--cyan);
 }
 
 .upgrade-desc {
-    font-size: 8px;
-    color: #94a3b8;
+    grid-column: 2 / 4;
+    grid-row: 2;
 }
 
 .upgrade-cost {
+    grid-column: 3;
+    grid-row: 1;
     display: flex;
     align-items: center;
-    gap: 6px;
-    font-size: 10px;
-    color: #facc15;
+    gap: 5px;
+    color: var(--amber);
+    font-size: 8px;
 }
 
 .upgrade-cost .mini-cow {
     width: 18px;
-    height: auto;
+    height: 18px;
 }
 
-/* НАСТРОЙКИ КНОПКА */
-.settings-toggle {
-    position: absolute;
-    top: 30px;
-    right: 30px;
-    width: 50px;
-    height: 50px;
-    background-color: rgba(0, 0, 0, 0.6);
-    border: 3px solid #fff;
-    cursor: pointer;
-    font-size: 24px;
-    color: #fff;
-    outline: none;
-    z-index: 15;
-}
-.settings-toggle:active {
-    transform: scale(0.95);
+.upgrade-item:disabled .upgrade-cost,
+.upgrade-item:disabled .upgrade-level {
+    color: #7e8d9a;
 }
 
-/* НАСТРОЕЧНОЕ ОКНО */
 .modal-overlay {
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background-color: rgba(0, 0, 0, 0.75);
-    display: none;
-    justify-content: center;
-    align-items: center;
+    inset: 0;
     z-index: 100;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: rgba(2, 7, 12, 0.82);
+    backdrop-filter: blur(7px);
 }
 
 .modal-window {
-    background-color: #2c3e50;
-    border: 6px solid #000;
-    padding: 40px;
-    width: 480px;
-    text-align: center;
-    position: relative;
-    color: #fff;
-    display: flex;
-    flex-direction: column;
+    width: min(560px, 100%);
+    background: #081522;
+    border: 1px solid #6f98b4;
+    box-shadow: 8px 8px 0 rgba(0, 0, 0, 0.5);
 }
 
-.modal-window h2 {
-    font-size: 16px;
-    margin-bottom: 25px;
-}
-
-.setting-row {
+.modal-header {
     display: flex;
+    align-items: center;
     justify-content: space-between;
-    align-items: center;
-    margin: 15px 0;
-    width: 100%;
+    padding: 16px 18px;
+    border-bottom: 1px solid var(--line);
 }
 
-.setting-title {
-    font-size: 10px;
-}
-
-.switcher {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.switch-btn {
-    background-color: #34495e;
-    border: 2px solid #fff;
-    color: #fff;
-    font-family: 'Press Start 2P', monospace;
-    font-size: 12px;
-    width: 35px;
-    height: 35px;
-    cursor: pointer;
-    outline: none;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.switch-btn:active {
-    transform: scale(0.9);
-}
-
-.switch-value {
-    font-size: 9px;
-    width: 130px;
-    text-align: center;
-    display: inline-block;
+.modal-header h2 {
+    margin-top: 5px;
+    font-size: 13px;
 }
 
 .modal-close {
-    position: absolute;
-    top: 15px;
-    right: 15px;
-    background: none;
-    border: none;
-    color: #ef4444;
-    font-family: 'Press Start 2P', monospace;
-    font-size: 16px;
+    color: var(--muted);
+    font-size: 28px;
+    line-height: 1;
+}
+
+.setting-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 18px;
+    padding: 18px;
+    border-bottom: 1px solid var(--line-soft);
+}
+
+.setting-row:last-child {
+    border-bottom: 0;
+}
+
+.setting-copy {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+}
+
+.setting-copy > span:last-child {
+    color: var(--muted);
+    font-family: system-ui, sans-serif;
+    font-size: 12px;
+    line-height: 1.4;
+}
+
+.setting-title {
+    color: var(--amber);
+    font-size: 8px;
+}
+
+.switcher {
+    display: grid;
+    grid-template-columns: 36px minmax(120px, 1fr) 36px;
+    align-items: center;
+    gap: 8px;
+}
+
+.switch-btn {
+    width: 36px;
+    height: 36px;
+    background: #0a1b2a;
+    border: 1px solid #6f98b4;
+    box-shadow: 2px 2px 0 #02070c;
     cursor: pointer;
+    font-family: system-ui, sans-serif;
+    font-size: 22px;
+}
+
+.switch-value {
+    min-width: 0;
+    font-size: 8px;
+    line-height: 1.4;
+    text-align: center;
+}
+
+.mini-cow-choice {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+#reset-btn {
+    width: auto;
+    min-width: 110px;
+    height: 42px;
+    padding: 0 14px;
+    font-size: 10px;
+    text-transform: uppercase;
+}
+
+@media (max-width: 980px) {
+    .score-board {
+        grid-template-columns: 1fr auto;
+        gap: 10px 16px;
+        min-height: 108px;
+    }
+
+    .brand-block {
+        border-right: 0;
+    }
+
+    .herd-stat {
+        grid-column: 1;
+        grid-row: 2;
+        justify-content: start;
+    }
+
+    .top-combo {
+        grid-column: 2;
+        grid-row: 2;
+        min-width: 180px;
+    }
+
+    .hud-controls {
+        grid-column: 2;
+        grid-row: 1;
+        justify-content: end;
+        border-left: 0;
+    }
+
+    .pixel-image {
+        width: min(55vw, 290px);
+    }
+
+    .upgrades-list {
+        grid-auto-columns: minmax(250px, 1fr);
+    }
+}
+
+@media (max-width: 600px) {
+    .score-board {
+        width: calc(100% - 16px);
+        min-height: 116px;
+        margin-top: 8px;
+        padding: 8px;
+    }
+
+    .brand-icon {
+        width: 32px;
+        height: 32px;
+    }
+
+    .brand-name {
+        font-size: 10px;
+    }
+
+    .brand-caption {
+        display: none;
+    }
+
+    .icon-button {
+        width: 36px;
+        height: 36px;
+        font-size: 18px;
+    }
+
+    .total-cows {
+        font-size: 16px;
+    }
+
+    .top-combo {
+        min-width: 145px;
+        padding-left: 10px;
+    }
+
+    .top-combo-copy,
+    .multiplier-copy {
+        font-size: 6px;
+    }
+
+    .game-field {
+        padding: 4px 10px;
+    }
+
+    .cow-stage {
+        min-height: 210px;
+    }
+
+    .main-cow-btn {
+        min-width: 190px;
+        min-height: 190px;
+    }
+
+    .pixel-image {
+        width: min(66vw, 260px);
+    }
+
+    .upgrades-dock {
+        width: calc(100% - 16px);
+        margin-bottom: 8px;
+    }
+
+    .upgrades-toolbar {
+        min-height: 42px;
+    }
+
+    .upgrades-toolbar h2 {
+        font-size: 9px;
+    }
+
+    .dock-toggle-label {
+        display: none;
+    }
+
+    .upgrades-body {
+        grid-template-columns: 1fr;
+        grid-template-rows: 44px minmax(0, 1fr);
+        max-height: 250px;
+    }
+
+    .upgrade-categories {
+        grid-template-columns: repeat(4, 1fr);
+        grid-template-rows: 1fr;
+        padding: 5px 8px;
+        border-right: 0;
+        border-bottom: 1px solid var(--line);
+    }
+
+    .category-button {
+        min-height: 32px;
+    }
+
+    .category-button.active {
+        box-shadow: inset 0 -3px 0 var(--magenta);
+    }
+
+    .category-button img {
+        width: 20px;
+        height: 20px;
+    }
+
+    .upgrades-list {
+        grid-auto-flow: row;
+        grid-auto-columns: initial;
+        grid-template-columns: 1fr;
+        gap: 8px;
+        padding: 8px;
+        overflow-x: hidden;
+        overflow-y: auto;
+    }
+
+    .upgrade-item {
+        min-width: 0;
+        min-height: 92px;
+    }
+
+    .setting-row {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+
+    .switcher {
+        grid-template-columns: 36px minmax(0, 1fr) 36px;
+    }
+}
+
+@media (max-height: 690px) and (min-width: 601px) {
+    .score-board {
+        min-height: 66px;
+        margin-top: 8px;
+        padding-top: 6px;
+        padding-bottom: 6px;
+    }
+
+    .brand-icon,
+    .icon-button {
+        width: 36px;
+        height: 36px;
+    }
+
+    .game-field {
+        padding-top: 2px;
+        padding-bottom: 4px;
+    }
+
+    .cow-stage {
+        min-height: 190px;
+    }
+
+    .main-cow-btn {
+        min-width: 180px;
+        min-height: 180px;
+    }
+
+    .pixel-image {
+        width: min(23vw, 230px);
+    }
+
+    .upgrades-body {
+        max-height: 146px;
+    }
+
+    .upgrade-item {
+        min-height: 96px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        transition-duration: 0.01ms !important;
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+    }
 }
